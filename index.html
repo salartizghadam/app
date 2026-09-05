@@ -182,6 +182,36 @@
   .digest .cta{margin:.4rem 1.2rem 1.2rem;text-align:center;background:var(--accent-bg);
     color:var(--accent-ink);border-radius:10px;padding:.6rem;font-weight:600;font-size:.84rem}
   .note{font-size:.74rem;color:var(--ink-3);margin-top:1rem}
+
+  .sum{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.2rem}
+  @media (max-width:700px){.sum{grid-template-columns:1fr}}
+  .sum .s{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:.9rem 1rem;box-shadow:var(--shadow);cursor:pointer;border-top:3px solid var(--line)}
+  .sum .s.on{border-top-color:var(--accent);background:var(--accent-bg)}
+  .sum .s.up{border-top-color:var(--hi)} .sum .s.up.on{background:var(--hi-bg)}
+  .sum .s.down{border-top-color:var(--ok)}
+  .sum .s .v{font-family:"Markazi Text",serif;font-weight:700;font-size:1.8rem;line-height:1.1}
+  .sum .s .l{font-size:.76rem;color:var(--ink-3)}
+  td.up{color:var(--hi);font-weight:600}
+  td.down{color:var(--ok);font-weight:600}
+
+  .bsplit{display:grid;grid-template-columns:270px 1fr;gap:1.1rem;align-items:start}
+  @media (max-width:820px){.bsplit{grid-template-columns:1fr}}
+  .blist{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;position:sticky;top:4.4rem}
+  .blist input{width:100%;border:0;border-bottom:1px solid var(--line);background:var(--panel-2);
+    color:var(--ink);font-family:inherit;font-size:.84rem;padding:.6rem .9rem;outline:none}
+  .blist .scroll{max-height:60vh;overflow-y:auto}
+  .blist .b{display:flex;justify-content:space-between;gap:.6rem;padding:.5rem .9rem;
+    border-bottom:1px solid var(--line);cursor:pointer;font-size:.83rem}
+  .blist .b:last-child{border-bottom:0}
+  .blist .b:hover{background:var(--panel-2)}
+  .blist .b.on{background:var(--accent-bg);color:var(--accent-ink);font-weight:700}
+  .blist .b span{color:var(--ink-3);font-family:"JetBrains Mono",monospace;font-size:.76rem}
+  .blist .b.on span{color:var(--accent-ink)}
+  .bhead{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+  .bhead h2{margin:0;font-size:1.1rem}
+  .bhead .m{font-size:.82rem;color:var(--ink-3)}
 </style>
 
 <div class="app">
@@ -194,6 +224,8 @@
     <a data-go="search"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.8"/><path d="M10.5 10.5L14 14"/></svg>جستجوی کالا</a>
     <a data-go="gaps"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5v13M1.5 8h13" stroke-dasharray="2 2"/><circle cx="8" cy="8" r="6.2"/></svg>کالاهایی که ندارید</a>
     <a data-go="prices"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13V3M2 13h12M5 10l3-4 3 2 3-5"/></svg>مقایسهٔ قیمت</a>
+    <a data-go="position"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5v13M4 5.5l4-4 4 4M4 10.5l4 4 4-4"/></svg>جایگاه قیمت شما</a>
+    <a data-go="brands"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 2.5h5l6 6-5 5-6-6z"/><circle cx="5.5" cy="5.5" r="1"/></svg>بر اساس برند</a>
     <a data-go="stores"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 6l1-3.5h10L14 6M2.5 6v7.5h11V6M6.5 13.5V9h3v4.5"/></svg>رقبای من</a>
     <a data-go="digest"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="1.5" width="12" height="13" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>خلاصهٔ هفتگی</a>
     <div class="spacer"></div>
@@ -287,6 +319,49 @@
       </div>
       <div class="tw"><table id="ptable"></table></div>
       <div class="pager" id="ppager"></div>
+    </div>
+
+    <!-- PRICE POSITION -->
+    <div class="view" data-view="position" hidden>
+      <h1 class="ph">جایگاه قیمت شما</h1>
+      <p class="psub">فقط کالاهایی که هم شما دارید هم رقبا. روی هر کارت بزنید تا فیلتر شود.</p>
+      <div class="sum">
+        <div class="s down" data-pf="down"><div class="v num" id="s_down"></div><div class="l">ارزان‌تر از همهٔ رقبا می‌فروشید</div></div>
+        <div class="s up" data-pf="up"><div class="v num" id="s_up"></div><div class="l">گران‌تر از همهٔ رقبا می‌فروشید</div></div>
+        <div class="s on" data-pf="all"><div class="v num" id="s_all"></div><div class="l">همهٔ کالاهای مشترک</div></div>
+      </div>
+      <div class="toolbar">
+        <input id="oq" type="search" placeholder="جستجو…" autocomplete="off">
+        <select id="ocat"><option value="">همهٔ دسته‌ها</option></select>
+        <div style="flex:1"></div>
+        <span class="hint" id="ocount"></span>
+      </div>
+      <div class="tw"><table id="otable"></table></div>
+      <div class="pager" id="opager"></div>
+      <p class="note">«اختلاف» = قیمت شما منهای ارزان‌ترین رقیب. منفی یعنی از همه ارزان‌ترید.</p>
+    </div>
+
+    <!-- BRANDS -->
+    <div class="view" data-view="brands" hidden>
+      <h1 class="ph">بر اساس برند</h1>
+      <p class="psub">یک برند را انتخاب کنید تا ببینید چه کالاهایی از آن ندارید و رقبا دارند — مناسب وقتی ویزیتور همان شرکت می‌آید.</p>
+      <div class="bsplit">
+        <div class="blist">
+          <input id="bq" type="search" placeholder="جستجوی برند…" autocomplete="off">
+          <div class="scroll" id="blist"></div>
+        </div>
+        <div>
+          <div class="bhead"><h2 id="bname"></h2><span class="m" id="bmeta"></span></div>
+          <div class="toolbar">
+            <button class="fchip on" data-bf="gap">فقط آن‌هایی که ندارم</button>
+            <button class="fchip" data-bf="all">همهٔ کالاهای این برند</button>
+            <div style="flex:1"></div>
+            <span class="hint" id="bcount"></span>
+          </div>
+          <div class="tw"><table id="btable"></table></div>
+          <div class="pager" id="bpager"></div>
+        </div>
+      </div>
     </div>
 
     <!-- STORES -->
@@ -506,7 +581,190 @@ document.getElementById('digestbody').innerHTML = `
   <div><b style="font-size:.82rem">پیشنهاد تأمین این هفته</b>
   <ol>${topg.slice(0,5).map(o=>`<li>${o.it[0]} — ${NCARRY[o.i]} فروشگاه</li>`).join('')}</ol></div>`;
 
+/* ---------- price position: where am I cheapest / dearest ---------- */
+const MINC = [], MAXC = [];
+ITEMS.forEach(it => {
+  const c = it[4].filter((v,j)=> j>0 && v!=null);
+  MINC.push(c.length ? Math.min(...c) : null);
+  MAXC.push(c.length ? Math.max(...c) : null);
+});
+const POS = ITEMS.map((it,i)=>{
+  const my = it[4][0];
+  if (my == null || MINC[i] == null) return null;
+  if (my < MINC[i]) return 'down';
+  if (my > MAXC[i]) return 'up';
+  return 'mid';
+});
+const nDown = POS.filter(p=>p==='down').length;
+const nUp   = POS.filter(p=>p==='up').length;
+const nAll  = POS.filter(p=>p!=null).length;
+document.getElementById('s_down').textContent = nDown.toLocaleString('en-US');
+document.getElementById('s_up').textContent   = nUp.toLocaleString('en-US');
+document.getElementById('s_all').textContent  = nAll.toLocaleString('en-US');
+
+cats.forEach(c=>{ const o=document.createElement('option'); o.value=o.textContent=c;
+  document.getElementById('ocat').appendChild(o); });
+
+const posState = {q:'', cat:'', f:'all', page:0, sort:'gap', dir:-1};
+
+function posRows(){
+  const terms = norm(posState.q).split(' ').filter(Boolean);
+  const out = [];
+  for (let i=0;i<ITEMS.length;i++){
+    if (POS[i] == null) continue;
+    if (posState.f !== 'all' && POS[i] !== posState.f) continue;
+    if (posState.cat && ITEMS[i][2] !== posState.cat) continue;
+    if (terms.length && !terms.every(t=>KEY[i].includes(t))) continue;
+    out.push(i);
+  }
+  const d = posState.dir;
+  out.sort((a,b)=>{
+    if (posState.sort === 'title') return d * ITEMS[a][0].localeCompare(ITEMS[b][0],'fa');
+    if (posState.sort === 'mine')  return d * (ITEMS[a][4][0] - ITEMS[b][4][0]);
+    const ga = ITEMS[a][4][0] - MINC[a], gb = ITEMS[b][4][0] - MINC[b];
+    return d * (Math.abs(ga) - Math.abs(gb));
+  });
+  return out;
+}
+
+function posRender(){
+  const idxs = posRows();
+  const pages = Math.max(1, Math.ceil(idxs.length/PER));
+  if (posState.page >= pages) posState.page = pages-1;
+  let h = '<thead><tr><th data-s="title">کالا</th><th class="mineh" data-s="mine">قیمت شما</th>'
+        + '<th>ارزان‌ترین رقیب</th><th>گران‌ترین رقیب</th><th data-s="gap">اختلاف</th>'
+        + '<th>وضعیت</th></tr></thead><tbody>';
+  const slice = idxs.slice(posState.page*PER, posState.page*PER+PER);
+  if (!slice.length) h += '<tr><td colspan="6" class="empty">چیزی پیدا نشد.</td></tr>';
+  for (const i of slice){
+    const my = ITEMS[i][4][0], gap = my - MINC[i];
+    const lbl = POS[i]==='down' ? 'ارزان‌ترین' : POS[i]==='up' ? 'گران‌ترین' : 'در بازه';
+    const cls = POS[i]==='down' ? 'down' : POS[i]==='up' ? 'up' : '';
+    const chip = POS[i]==='up' ? 'hi' : POS[i]==='down' ? 'mid' : 'lo';
+    const sub = [ITEMS[i][1], ITEMS[i][3]].filter(Boolean).join(' · ');
+    h += '<tr><td class="name">' + ITEMS[i][0] + '<small>' + sub + '</small></td>'
+       + '<td class="mine num">' + fmt(my) + '</td>'
+       + '<td class="num">' + fmt(MINC[i]) + '</td>'
+       + '<td class="num">' + fmt(MAXC[i]) + '</td>'
+       + '<td class="num ' + cls + '">' + (gap>0?'+':'') + fmt(gap) + '</td>'
+       + '<td><span class="chip ' + chip + '">' + lbl + '</span></td></tr>';
+  }
+  const t = document.getElementById('otable');
+  t.innerHTML = h + '</tbody>';
+  t.querySelectorAll('thead th[data-s]').forEach(th=>{
+    if (posState.sort === th.dataset.s)
+      th.innerHTML += ' <span class="ar">' + (posState.dir<0?'▼':'▲') + '</span>';
+    th.onclick = ()=>{
+      if (posState.sort === th.dataset.s) posState.dir = -posState.dir;
+      else { posState.sort = th.dataset.s; posState.dir = -1; }
+      posState.page = 0; posRender();
+    };
+  });
+  document.getElementById('ocount').innerHTML =
+    '<b>' + idxs.length.toLocaleString('en-US') + '</b> کالا';
+  const pg = document.getElementById('opager');
+  pg.innerHTML = pages>1
+    ? '<button ' + (posState.page===0?'disabled':'') + ' data-d="-1">قبلی</button>'
+      + '<span class="pg">صفحهٔ ' + (posState.page+1) + ' از ' + pages + '</span>'
+      + '<button ' + (posState.page>=pages-1?'disabled':'') + ' data-d="1">بعدی</button>'
+    : '';
+  pg.querySelectorAll('button').forEach(b=> b.onclick = ()=>{
+    posState.page += Number(b.dataset.d); posRender(); window.scrollTo(0,0);
+  });
+}
+
+document.querySelectorAll('[data-pf]').forEach(c=> c.addEventListener('click', ()=>{
+  document.querySelectorAll('[data-pf]').forEach(x=>x.classList.toggle('on', x===c));
+  posState.f = c.dataset.pf; posState.page = 0; posRender();
+}));
+(function(){ let t; document.getElementById('oq').addEventListener('input', e=>{
+  clearTimeout(t); t = setTimeout(()=>{ posState.q = e.target.value; posState.page=0; posRender(); }, 120);
+}); })();
+document.getElementById('ocat').addEventListener('change', e=>{
+  posState.cat = e.target.value; posState.page = 0; posRender();
+});
+posRender();
+
+/* ---------- brands: what am I missing from this supplier ---------- */
+const BR = {};
+ITEMS.forEach((it,i)=>{
+  const b = (it[1]||'').trim();
+  if (!b) return;
+  if (!BR[b]) BR[b] = {all:[], gap:[]};
+  BR[b].all.push(i);
+  if (it[4][0] == null) BR[b].gap.push(i);
+});
+const brandNames = Object.keys(BR).sort((a,b)=>
+  BR[b].gap.length - BR[a].gap.length || a.localeCompare(b,'fa'));
+const bState = {brand: brandNames[0], f:'gap', page:0, q:''};
+
+function renderBrandList(){
+  const nq = norm(bState.q);
+  const shown = brandNames.filter(b=> !nq || norm(b).includes(nq)).slice(0, 400);
+  const el = document.getElementById('blist');
+  el.innerHTML = shown.length
+    ? shown.map(b=> '<div class="b' + (b===bState.brand?' on':'') + '" data-b="'
+        + b.replace(/"/g,'&quot;') + '"><span style="color:inherit">' + b
+        + '</span><span>' + BR[b].gap.length + '</span></div>').join('')
+    : '<div class="b" style="color:var(--ink-3)">برندی پیدا نشد</div>';
+  el.querySelectorAll('.b[data-b]').forEach(x=> x.onclick = ()=>{
+    bState.brand = x.dataset.b; bState.page = 0; renderBrandList(); renderBrandTable();
+  });
+}
+
+function renderBrandTable(){
+  const g = BR[bState.brand];
+  if (!g) return;
+  const idxs = (bState.f === 'gap' ? g.gap : g.all).slice()
+                 .sort((x,y)=> NCARRY[y] - NCARRY[x]);
+  const pages = Math.max(1, Math.ceil(idxs.length/PER));
+  if (bState.page >= pages) bState.page = pages-1;
+  document.getElementById('bname').textContent = bState.brand;
+  document.getElementById('bmeta').textContent =
+    g.gap.length.toLocaleString('en-US') + ' کالا از این برند را ندارید · مجموع '
+    + g.all.length.toLocaleString('en-US') + ' کالا';
+  let h = '<thead><tr><th>کالا</th><th class="mineh">قیمت شما</th>';
+  for (let i=1;i<NS;i++) h += '<th>' + STORES[i].n + '</th>';
+  h += '<th>چند فروشگاه</th></tr></thead><tbody>';
+  const slice = idxs.slice(bState.page*PER, bState.page*PER+PER);
+  if (!slice.length) h += '<tr><td colspan="' + (NS+2) + '" class="empty">موردی نیست.</td></tr>';
+  for (const i of slice){
+    const p = ITEMS[i][4];
+    const comp = p.filter((v,j)=> j>0 && v!=null);
+    const mn = comp.length ? Math.min(...comp) : null;
+    h += '<tr><td class="name">' + ITEMS[i][0] + '<small>' + (ITEMS[i][3]||'') + '</small></td>';
+    h += p[0]==null ? '<td class="none">ندارید</td>' : '<td class="mine num">' + fmt(p[0]) + '</td>';
+    for (let j=1;j<NS;j++)
+      h += p[j]==null ? '<td class="none">—</td>'
+                      : '<td class="num' + (p[j]===mn?' low':'') + '">' + fmt(p[j]) + '</td>';
+    h += '<td class="num">' + NCARRY[i] + '</td></tr>';
+  }
+  document.getElementById('btable').innerHTML = h + '</tbody>';
+  document.getElementById('bcount').innerHTML =
+    '<b>' + idxs.length.toLocaleString('en-US') + '</b> کالا';
+  const pg = document.getElementById('bpager');
+  pg.innerHTML = pages>1
+    ? '<button ' + (bState.page===0?'disabled':'') + ' data-d="-1">قبلی</button>'
+      + '<span class="pg">صفحهٔ ' + (bState.page+1) + ' از ' + pages + '</span>'
+      + '<button ' + (bState.page>=pages-1?'disabled':'') + ' data-d="1">بعدی</button>'
+    : '';
+  pg.querySelectorAll('button').forEach(x=> x.onclick = ()=>{
+    bState.page += Number(x.dataset.d); renderBrandTable(); window.scrollTo(0,0);
+  });
+}
+
+document.querySelectorAll('[data-bf]').forEach(c=> c.addEventListener('click', ()=>{
+  document.querySelectorAll('[data-bf]').forEach(x=>x.classList.toggle('on', x===c));
+  bState.f = c.dataset.bf; bState.page = 0; renderBrandTable();
+}));
+(function(){ let t; document.getElementById('bq').addEventListener('input', e=>{
+  clearTimeout(t); t = setTimeout(()=>{ bState.q = e.target.value; renderBrandList(); }, 120);
+}); })();
+renderBrandList();
+renderBrandTable();
+
 /* ---------- nav ---------- */
+
 const views = document.querySelectorAll('.view');
 document.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', e=>{
   const name = el.dataset.go; if(!name) return; e.preventDefault();
